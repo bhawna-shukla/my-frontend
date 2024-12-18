@@ -1,47 +1,108 @@
+"use client";
 import React from 'react'
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import toast from "react-hot-toast";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+
+
+const ContactusSchema = Yup.object().shape({
+    name: Yup.string()
+        .min(2, "Name must be at least 2 characters")
+        .max(50, "Name must be at most 50 characters")
+        .required("Name is required"),
+
+    email: Yup.string()
+        .email("Please enter a valid email address")
+        .required("Email is required"),
+
+
+});
 
 const ContactUs = () => {
+
+    const router = useRouter();
+    const contactusForm = useFormik({
+        initialValues: {
+            email: "",
+            name: "",
+        },
+        onSubmit: (values, { resetForm }) => {
+            console.log(values);
+            axios
+                .post("http://localhost:5000/contact/add", values)
+                .then((response) => {
+                    console.log(response.status);
+                    resetForm();
+                    toast.success(" Successfully");
+                    router.push("/");
+                })
+                .catch((err) => {
+                    console.log(err);
+                    toast.error("try again");
+                });
+        },
+        validationSchema: ContactusSchema,
+    });
     return (
         <div>
-            <section className="min-h-screen bg-gradient-to-b from-red-950 via-red-500 to-red-300 dark:bg-red-900">
+            <section className="min-h-screen bg-[url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSNxt1PhhHRHDUB666e1JM7IoV4km_jcsK31A&s')] bg-cover">
                 <div className="container px-6 py-10 mx-auto">
                     <div className="lg:flex lg:items-center lg:-mx-10">
                         <div className="lg:w-1/2 lg:mx-10">
-                            <h1 className="text-2xl font-semibold text-gray-800 capitalize dark:text-white lg:text-3xl">
+                            <h1 className="text-2xl font-semibold text-gray-800 capitalize dark:text-white lg:text-5xl">
                                 Let’s talk
                             </h1>
-                            <p className="mt-4 text-gray-500 dark:text-gray-400">
+                            <p className="mt-4 text-2xl text-gray-500 dark:text-black font-[sans-serief]">
                                 Ask us everything and we would love to hear from you
                             </p>
-                            <form className="mt-12">
+                            <form onSubmit={contactusForm.handleSubmit} className="mt-12">
+
                                 <div className="-mx-2 md:items-center md:flex">
                                     <div className="flex-1 px-2">
-                                        <label className="block mb-2 text-md text-gray-600 dark:text-gray-200">
+                                        <label className="block mb-2 text-xl text-gray dark:text-gray font-[sans-serief]">
                                             Full Name
                                         </label>
+                                        {contactusForm.errors.name && contactusForm.touched.name ? (
+                                            <div className="text-red-500 text-sm">
+                                                {contactusForm.errors.name}
+                                            </div>
+                                        ) : null}
                                         <input
                                             type="text"
                                             placeholder="Enter your Name "
-                                            className="block w-full px-5 py-3 mt-2  placeholder-white bg-white border border-gray-200 rounded-md dark:placeholder-white-600 dark:bg-red-700 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                                            className="block w-full px-5 py-3 mt-2 placeholder-white bg-white border border-gray-200 rounded-md dark:placeholder-gray-600 dark:bg-white-700 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                                            id="name"
+                                            onChange={contactusForm.handleChange}
+                                            value={contactusForm.values.name}
                                         />
                                     </div>
                                     <div className="flex-1 px-2 mt-4 md:mt-0">
-                                        <label className="block mb-2 text-md text-gray-600 dark:text-gray-200">
+                                        <label className="block mb-2 text-xl text-gray-800 dark:text-gray-800 font-[sans-serief]">
                                             Email address
                                         </label>
+                                        {contactusForm.errors.email && contactusForm.touched.email ? (
+                                            <div className="text-red-500 text-sm">
+                                                {contactusForm.errors.email}
+                                            </div>
+                                        ) : null}
                                         <input
                                             type="email"
                                             placeholder="Enter you Email Id"
-                                            className="block w-full px-5 py-3 mt-2  placeholder-white bg-gray border border-white-200 rounded-md dark:placeholder-white-600 dark:bg-red-700 dark:text-gray-300 dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                                            className="block w-full px-5 py-3 mt-2 text-black  placeholder-white bg-gray- border border-white-200 rounded-md dark:placeholder-gray-600 dark:bg-white-700  dark:border-gray-700 focus:border-blue-400 dark:focus:border-blue-400 focus:ring-blue-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                                            id="email"
+                                            onChange={contactusForm.handleChange}
+                                            value={contactusForm.values.email}
                                         />
                                     </div>
                                 </div>
                                 <div className="w-full mt-4">
-                                    <label className="block mb-2 text-lg text-gray-600 dark:text-gray-200">
+                                    <label className="block mb-2 text-xl text-gray dark:text-gray font-[sans-serief] ">
                                         Message
                                     </label>
                                     <textarea
-                                        className="block w-full h-32 px-5 py-3 mt-2 text-red-700 placeholder-red-400 bg-white border border-red-200 rounded-md md:h-56 dark:placeholder-red-600 dark:bg-red-900 dark:text-red-300 dark:border-red-700 focus:border-red-400 dark:focus:border-white-400 focus:ring-white-400 focus:outline-none focus:ring focus:ring-opacity-40"
+                                        className="block w-full h-32 px-5 py-3 mt-2 text-semibold text-gray-900 placeholder-gray-800 bg-gray border border--200 rounded-md md:h-56 dark:placeholder--300 dark:bg--400 dark:text--950 dark:border-red-400 focus:border-red-400 focus:outline-none focus:ring focus:ring-opacity-40"
                                         placeholder="Message...."
                                         defaultValue={""}
                                     />
@@ -61,7 +122,7 @@ const ContactUs = () => {
                                 <p className="flex items-start -mx-2">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
-                                        className="w-6 h-6 mx-2 text-blue-900 dark:text-blue-500"
+                                        className="w-6 h-6 mx-2 text-blue-900 dark:text-blue-900"
                                         fill="none"
                                         viewBox="0 0 24 24"
                                         stroke="currentColor"
@@ -78,14 +139,14 @@ const ContactUs = () => {
                                             d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                                         />
                                     </svg>
-                                    <span className="mx-2 text-blue-700 truncate w-72 dark:text-blue-400">
+                                    <span className="mx-2 text-blue-900 truncate w-72 dark:text-blue-900">
                                         Cecilia Chapman 711-2880 Nulla St. Mankato Mississippi 96522
                                     </span>
                                 </p>
                                 <p className="flex items-start -mx-2">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
-                                        className="w-6 h-6 mx-2 text-lime-400 dark:text-lime-400"
+                                        className="w-6 h-6 mx-2 text-blue-900 dark:text-blue-900"
                                         fill="none"
                                         viewBox="0 0 24 24"
                                         stroke="currentColor"
@@ -97,7 +158,7 @@ const ContactUs = () => {
                                             d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
                                         />
                                     </svg>
-                                    <span className="mx-2   text-lime-400 truncate w-72 dark:text-lime-400">
+                                    <span className="mx-2   text-blue-900 truncate w-72 dark:text-blue-900">
                                         (257) 563-7401
                                     </span>
                                 </p>
@@ -122,7 +183,7 @@ const ContactUs = () => {
                                 </p>
                             </div>
                             <div className="mt-6 w-80 md:mt-8">
-                                <h3 className=" text-xl text-indigo-600 dark:text-indigo-600 font-bold">Follow us</h3>
+                                <h3 className=" text-xl text-blue-600 dark:text-blue-600 font-bold">Follow us</h3>
                                 <div className="flex mt-4 -mx-1.5 ">
                                     <a
                                         className="mx-1.5 dark:hover:text-white-400 text-white-400 transition-colors duration-300 transform hover:text-blue-500"
