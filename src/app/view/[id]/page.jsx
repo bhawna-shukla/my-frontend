@@ -38,7 +38,7 @@ const View = () => {
                 <button className=" m-6 ml-10  border rounded-lg bg-gray-900 text-white hover:bg-blue-900 p-4">Use Templates</button>
                 <div className="col-md-6">
                   <h1 className='py-3 ml-8 text-6xl text-gray-900 font-[geoge]'> {productList.title}</h1>
-                  <h1 className=' font-semibold text-blue-900 ml-8  text-xl'> #{productList.tag} </h1>
+                  <h1 className=' font-semibold text-blue-900 ml-8  text-xl'> {productList.tag} </h1>
                   <h1 className='    mt-9  ml-8 font-[mono] text-3xl'> {productList.category}</h1>
                   {/* <h1 className='fw-bold ' style={{ color: "teal", fontFamily: "initial" }}> <i className="bi bi-currency-rupee fw-bold "></i>{productList.price}</h1> */}
                   <p className='py-3  ml-8   text-xl'> {productList.description}</p>
